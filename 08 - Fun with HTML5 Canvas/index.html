@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas</title>
+</head>
+<body>
+<canvas id="draw" width="800" height="800"></canvas>
+<script>
+  const canvas = document.getElementById('draw')
+  const context = canvas.getContext('2d') // this is where drawing happens
+  let drawing, // a flag for mouse down and on canvas
+  coords = [0, 0], // a placeholder for where to start the next line
+  hue = 0 // hsl value that wraps at 360
+  lineWidth = 10, growing = true // width of the line
+  Object.assign( canvas, {
+    width: window.innerWidth,
+    height: window.innerHeight
+  })
+  Object.assign( context, {
+    lineJoin: 'round',
+    lineCap: 'round',
+    globalCompositeOperation: 'xor'
+  })
+  
+  function draw ({ offsetX, offsetY }) {
+    if(!drawing) return
+    // update strokeStyle color
+    Object.assign(context, {
+      strokeStyle: `hsl(${hue}, 100%, 50%)`,
+      lineWidth
+    })
+    // build a path
+    context.beginPath()
+    context.moveTo(...coords)
+    context.lineTo(offsetX, offsetY)
+    // then draw it
+    context.stroke()
+    // update the starting point for the next path
+    coords = [offsetX, offsetY]
+    // change color (hsl value will cycle back at 360)
+    hue++
+    // increase or decrease width of line appropriately
+    if(growing) lineWidth++
+    else lineWidth--
+    // reset flag for increasing or decreasing line width
+    if(lineWidth === 10 || lineWidth === 80) growing = !growing
+  }
+
+  canvas.addEventListener('mousemove', draw)
+  canvas.addEventListener('mousedown', ({ offsetX, offsetY }) => {
+    drawing = true
+    coords = [offsetX, offsetY]
+  })
+  canvas.addEventListener('mouseup', () => drawing = false)
+  canvas.addEventListener('mouseout', () => drawing = false)
+
+</script>
+
+<style>
+  html, body {
+    margin:0;
+  }
+</style>
+
+</body>
+</html>
