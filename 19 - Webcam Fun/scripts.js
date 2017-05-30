@@ -4,10 +4,13 @@ const ctx = canvas.getContext('2d')
 const strip = document.querySelector('.strip')
 const snap = document.querySelector('.snap')
 const filterSelect = document.querySelector('.filterSelect')
+
 let filters = {
   None: null,
   'RGBSplit': rgbEffect,
-  red: redEffect
+  red: redEffect,
+  green: greenEffect,
+  blue: blueEffect
 }
 let filter
 
@@ -56,15 +59,28 @@ function takePhoto () {
 
 function redEffect (pixels) {
   for(let i = 0; i < pixels.data.length; i += 4) {
-    // every fourth because it goes R, G, B, A in the clampedArray
     pixels.data[i] = pixels.data[i] + 200
   }
   return pixels
 }
 
+function greenEffect (pixels) {
+  for(let i = 1; i < pixels.data.length; i += 4) {
+    pixels.data[i] = pixels.data[i] + 200
+  }
+  return pixels
+}
+
+function blueEffect (pixels) {
+  for(let i = 2; i < pixels.data.length; i += 4) {
+    pixels.data[i] = pixels.data[i] + 200
+  }
+  return pixels
+}
+
+// every fourth because it goes R, G, B, A in the clampedArray
 function rgbEffect  (pixels) {
   for(let i = 0; i < pixels.data.length; i += 4) {
-    // every fourth because it goes R, G, B, A in the clampedArray
     pixels.data[i - 150] = pixels.data[i]
     pixels.data[i + 100] = pixels.data[i + 1]
     pixels.data[i - 150] = pixels.data[i + 2]
